@@ -284,11 +284,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   username: Azure
-  email: azure@skies.net
+  email: azzhayman@gmail.com
   password: silverlining
+  repeatPassword: 
   scrW: 0
   scrH: 0
   errorMessage: 
+  mainMenu: 1
+  login: 0
+  newUser: 0
 --- !u!4 &1885417401
 Transform:
   m_ObjectHideFlags: 0

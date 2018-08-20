@@ -1,6 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
+
+
+using System;
+using System.Net;
+using System.Net.Mail;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+
+
 
 public class LoginSystem : MonoBehaviour
 {
@@ -11,9 +22,11 @@ public class LoginSystem : MonoBehaviour
     public string errorMessage;
 
     public bool mainMenu = true;
-    public bool login, newUser;
+    public bool login, newUser, recover;
 
-
+    private string randCode;
+    private int codeLength = 6;
+    int randSelect;
 
     private void Start()
     {
@@ -110,6 +123,8 @@ public class LoginSystem : MonoBehaviour
                     errorMessage = "";
                     Debug.Log("Sending...");
                     StartCoroutine(CreateAccount(username, email, password));
+                    username = email = password = repeatPassword = "";
+
                 }
             }
 
@@ -156,9 +171,10 @@ public class LoginSystem : MonoBehaviour
             errorMessage = www.text;
             // errorGUI = true;
         }
+        EmailCheck(email);
+    
     }
 
-    // TO DO
     IEnumerator Login(string username, string password)
     {
         string loginURL = "http://localhost/sqlsystem/login.php";
@@ -175,6 +191,56 @@ public class LoginSystem : MonoBehaviour
         }
     }
 
+    IEnumerator EmailCheck(string email)
+    {
+        string loginURL = "http://localhost/sqlsystem/checkemail.php";
+        WWWForm user = new WWWForm();
+        user.AddField("email_Post", email);
+        WWW www = new WWW(loginURL, user);
+        yield return www;
+        Debug.Log(www.text);
+        if (www.text == "Check Email")
+        {
+            errorMessage = www.text;
+        }
+        else if (www.text == "Email exists")
+        {
+            GenerateCode();
+            SendMail(email, randCode);
+        }
+
+    }
+
+    string GenerateCode()
+    {
+        const string charValues = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        for (int i = 0; i <=  codeLength; i++)
+        {
+            randSelect = Random.Range(0, charValues.Length - 1);
+            randCode += charValues[randSelect];
+        }
+        return randCode;
+    }
+
+    void SendMail(string email, string confirmCode)
+    {
+        MailMessage mail = new MailMessage();
+        mail.From = new MailAddress("sqlunityclasssydney@gmail.com");
+        mail.To.Add(email);
+        mail.Subject = "Password Reset";
+        mail.Body = "Hello " + username + "\n Reset using this code: " + confirmCode;
+        
+        SmtpClient smtpServer = new SmtpClient("smtp.gmail.com");
+        smtpServer.Port = 25;
+        smtpServer.Credentials = new System.Net.NetworkCredential("sqlunityclasssydney@gmail.com", "sqlpassword") as ICredentialsByHost;
+        smtpServer.EnableSsl = true;
+        ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate cert, X509Chain chain, SslPolicyErrors policyErrors)
+        {
+            return true;
+        };
+        smtpServer.Send(mail);
+        Debug.Log("Trying to send email");
+    }
 
 
 
