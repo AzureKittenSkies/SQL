@@ -293,6 +293,7 @@ MonoBehaviour:
   mainMenu: 1
   login: 0
   newUser: 0
+  recover: 0
 --- !u!4 &1885417401
 Transform:
   m_ObjectHideFlags: 0
