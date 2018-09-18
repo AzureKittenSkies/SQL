@@ -22,7 +22,7 @@ public class LoginSystem : MonoBehaviour
     public string errorMessage;
 
     public bool mainMenu = true;
-    public bool login, newUser, recover;
+    public bool login, newUser, recover, passReset;
 
     private string randCode;
     private int codeLength = 6;
@@ -31,6 +31,7 @@ public class LoginSystem : MonoBehaviour
     private void Start()
     {
         mainMenu = true;
+        username = password = email = "";
     }
 
     // Update is called once per frame
@@ -44,6 +45,10 @@ public class LoginSystem : MonoBehaviour
             StartCoroutine(CreateAccount(username, email, password));
         }
         */
+        if (errorMessage == "Login Success")
+        {
+            SceneManager.LoadScene(1);
+        }
     }
 
     private void OnGUI()
@@ -85,6 +90,15 @@ public class LoginSystem : MonoBehaviour
                 errorMessage = "";
                 Debug.Log("Sending...");
                 StartCoroutine(Login(username, password));
+
+            }
+
+            if (GUI.Button(new Rect(scrW * 12, scrH * 4, scrW * 1.5f, scrH), "=>"))
+            {
+                errorMessage = "";
+                Debug.Log("Sending...");
+                StartCoroutine(Login(username, password));
+
             }
 
             if (GUI.Button(new Rect(scrW * 12, scrH * 6, scrW * 1.5f, scrH), "Menu"))
@@ -93,6 +107,32 @@ public class LoginSystem : MonoBehaviour
                 mainMenu = true;
                 username = password = "";
             }
+
+        }
+
+        if (passReset)
+        {
+            GUI.Box(new Rect(scrW * 4, scrH * 3.5f, scrW, scrH), "Email");
+            username = GUI.TextField(new Rect(scrW * 5.5f, scrH * 3.5f, scrW * 5, scrH), email);
+
+            GUI.Box(new Rect(scrW * 4, scrH * 5.5f, scrW, scrH), "New Password");
+            password = GUI.TextField(new Rect(scrW * 5.5f, scrH * 5.5f, scrW * 5, scrH), password);
+
+            if (GUI.Button(new Rect(scrW * 12, scrH * 4, scrW * 1.5f, scrH), "=>"))
+            {
+                errorMessage = "";
+                Debug.Log("Sending...");
+                StartCoroutine(PasswordReset(email, password));
+
+            }
+
+            if (GUI.Button(new Rect(scrW * 12, scrH * 6, scrW * 1.5f, scrH), "Menu"))
+            {
+                login = false;
+                mainMenu = true;
+                username = password = "";
+            }
+
 
         }
 
@@ -189,6 +229,12 @@ public class LoginSystem : MonoBehaviour
             errorMessage = www.text;
             // errorGUI = true;
         }
+        if (www.text.Contains("Login Success"))
+        {
+            errorMessage = www.text;
+            Debug.Log(errorMessage);
+            SceneManager.LoadScene(1);
+        }
     }
 
     IEnumerator EmailCheck(string email)
@@ -209,6 +255,24 @@ public class LoginSystem : MonoBehaviour
             SendMail(email, randCode);
         }
 
+    }
+
+    IEnumerator PasswordReset(string email, string password)
+    {
+        string loginURL = "http://localhost/sqlsystem/checkemail.php";
+        WWWForm user = new WWWForm();
+        user.AddField("email_Post", email);
+        user.AddField("password_Post", password);
+        WWW www = new WWW(loginURL, user);
+        yield return www;
+        if (www.text.Contains("Password Changed"))
+        {
+            errorMessage = www.text;
+        }
+        else
+        {
+            errorMessage = www.text;
+        }
     }
 
     string GenerateCode()
