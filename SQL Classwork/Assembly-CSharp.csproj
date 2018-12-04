@@ -64,6 +64,8 @@
     <Compile Include="Assets\Scripts\Inventory.cs" />
     <Compile Include="Assets\Scripts\Item.cs" />
     <Compile Include="Assets\Scripts\LoginSystem.cs" />
+    <Compile Include="Assets\Scripts\Player.cs" />
+    <Compile Include="Assets\Scripts\PlayerCustomisation.cs" />
     <Compile Include="Assets\Scripts\RadialMenu.cs" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/Users/aaron.hayman4/Documents/Repos/SQL/SQL Classwork/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
