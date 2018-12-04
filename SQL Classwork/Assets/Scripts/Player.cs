@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
         for (int i = 0; i < playerCustomList.Length; i++)
         {
             string[] playerCustomSplit = playerCustomList[i].Split('|');
-
+            Debug.Log(playerCustomSplit[i]);
             PlayerCustomisationLoadout playerAppearance = new PlayerCustomisationLoadout(int.Parse(playerCustomSplit[0]), playerCustomSplit[1],
                int.Parse(playerCustomSplit[2]), int.Parse(playerCustomSplit[3]), int.Parse(playerCustomSplit[4]),
                int.Parse(playerCustomSplit[5]), int.Parse(playerCustomSplit[6]), playerCustomSplit[7]);
